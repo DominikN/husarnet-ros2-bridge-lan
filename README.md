@@ -21,8 +21,8 @@ graph TB
         listener
     end
     
-    host-1-->ros2router-1
-    host-2-->ros2router-1
+    talker-1-->ros2router-1
+    talker-2-->ros2router-1
 
     ros2router-1-->husarnet-1
 

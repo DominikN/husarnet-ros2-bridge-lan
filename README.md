@@ -21,10 +21,15 @@ graph TB
         listener
     end
     
-    host-1-->husarnet-host-1
-    host-2-->husarnet-host-1
+    host-1-->ros2router-1
+    host-2-->ros2router-1
 
-    husarnet-1-->husarnet-2
+    ros2router-1-->husarnet-1
+
+    husarnet-1<-->husarnet-2
+
+    ros2router-2-->husarnet-2
+    listener-->ros2router-2
 ```
 
 The aim of this project is to show how to bridge local non-husarnet powered devices working in LAN with ROS 2 nodes running on the remote (in different LAN) Husarnet powered device.

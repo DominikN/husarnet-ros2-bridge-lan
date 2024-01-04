@@ -1,0 +1,33 @@
+name: talker
+services:
+
+  husarnet:
+    image: husarnet/husarnet:2.0.180
+    volumes:
+      - /var/lib/husarnet
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    environment:
+      - HOSTNAME=lan-bridge
+      - JOINCODE
+      # - HUSARNET_DEBUG=1
+
+  ros2router:
+    image: husarnet/ros2router:1.6.0
+    network_mode: service:husarnet
+    restart: unless-stopped
+    environment:
+      - EXIT_IF_HOST_TABLE_CHANGED=TRUE # if new Husarnet peer is detected restart the DDS Router to apply a new initial-peers config
+      - ROS_LOCALHOST_ONLY=0 # enables ROS2 Router local LAN participant
+
+  host-1:
+    build: .
+    command: ros2 run demo_nodes_cpp talker
+
+  host-2:
+    build: .
+    command: ros2 run demo_nodes_cpp talker

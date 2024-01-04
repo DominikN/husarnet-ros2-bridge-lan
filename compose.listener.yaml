@@ -1,0 +1,36 @@
+name: listener
+services:
+
+  husarnet:
+    image: husarnet/husarnet:2.0.180
+    ipc: shareable
+    volumes:
+      - /var/lib/husarnet
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    environment:
+      - HOSTNAME=listener
+      - JOINCODE
+      # - HUSARNET_DEBUG=1
+
+  ros2router-2:
+    image: husarnet/ros2router:1.6.0
+    network_mode: service:husarnet
+    ipc: service:husarnet
+    restart: unless-stopped
+    environment:
+      - EXIT_IF_HOST_TABLE_CHANGED=TRUE
+
+  listener:
+    build: .
+    network_mode: service:husarnet
+    ipc: service:husarnet
+    volumes:
+      - ./shm-only.xml:/shm-only.xml
+    environment:
+      - FASTRTPS_DEFAULT_PROFILES_FILE=/shm-only.xml
+    command: ros2 run demo_nodes_cpp listener
